@@ -1,7 +1,3 @@
-/* iyi çalışmalar
-
-*/
-
 #include <Keypad.h>
 #include <LiquidCrystal_I2C.h>
 
@@ -21,6 +17,7 @@ struct pinler{
   byte satir_pinleri[satir]={11,10,9,8};
   byte sutun_pinleri[sutun]={7,6,5,4};
   volatile const byte buton_pin_kesme[1]={2};
+  const byte virgul_tusu=3;
 };
 struct pinler pin;
 
@@ -32,12 +29,13 @@ struct sensor_deger sensor;
 
 Keypad tus=Keypad(makeKeymap(tus_takimi),pin.satir_pinleri,pin.sutun_pinleri,satir,sutun);
 bool ac=false;
-bool kapi=false;bool kapi2=false;
+bool kapi=false;bool kapi2=false;bool kapi3=false;
 char gelen_tus;
 char birinci_hafiza[10];
 char ikinci_hafiza[10];
 byte sayac=3;
 char islem;float sonuc;
+char virgul[1]={'.'};
 void setup()
 {
   Serial.begin(9600);
@@ -47,7 +45,7 @@ void setup()
   }
   else
   {
-    lcd.init();
+    lcd.init();pinMode(pin.virgul_tusu,INPUT);	
     for(int i=0; i<1; i++)
       pinMode(pin.buton_pin_kesme[i],INPUT);
     attachInterrupt(0,hesap_makinesi_acma,CHANGE);
@@ -56,6 +54,7 @@ void setup()
 
 void loop()
 {
+  
   ekran_yonetimi();
   delay(1);
  
@@ -95,14 +94,21 @@ void ekran_yonetimi() {
       while(sayac<13)
       { 
         gelen_tus=tus.getKey();
+        if(digitalRead(pin.virgul_tusu)!=0 and kapi3==false)
+        {
+          birinci_hafiza[sayac-3]=virgul[0];
+          lcd.setCursor(sayac,0);lcd.print(birinci_hafiza[sayac-3]);
+          sayac++;
+          kapi3=!kapi3;
+        }
         if(gelen_tus)
         {
           if(gelen_tus!='+' and gelen_tus!='-' and gelen_tus!='x' and gelen_tus!='/')
           {
             birinci_hafiza[sayac-3]=gelen_tus;
-            lcd.setCursor(sayac,0);lcd.print(birinci_hafiza[sayac-3]);
-            sayac++;
-          }   
+          	lcd.setCursor(sayac,0);lcd.print(birinci_hafiza[sayac-3]);
+            sayac++;   
+          }	           
           if(gelen_tus=='*')
           {
             lcd.clear(); 
@@ -116,6 +122,7 @@ void ekran_yonetimi() {
             lcd.clear();
             ilk_ekran();
             kapi=!kapi;kapi2=!kapi2;sayac=3;
+            kapi3=!kapi3;
             islem=gelen_tus;
             goto buradan2;
           }  
@@ -130,6 +137,13 @@ void ekran_yonetimi() {
       do
       {
         gelen_tus=tus.getKey();
+        if(digitalRead(pin.virgul_tusu)!=0 and kapi3==false)
+        {
+          ikinci_hafiza[sayac-3]=virgul[0];
+          lcd.setCursor(sayac,0);lcd.print(birinci_hafiza[sayac-3]);
+          sayac++;
+          kapi3=!kapi3;
+        }
         if(gelen_tus)
         {
           if(gelen_tus!='+' and gelen_tus!='-' and gelen_tus!='x' and gelen_tus!='/')
@@ -142,6 +156,7 @@ void ekran_yonetimi() {
           {
             lcd.clear();
             kapi2=!kapi2;ac=true;
+            kapi3=!kapi3;
             sayac=3;
             goto buradan;
           }
@@ -149,7 +164,7 @@ void ekran_yonetimi() {
           {
             lcd.clear();ilk_ekran();
             sayac=4;
-            toplam(atoi(birinci_hafiza),atoi(ikinci_hafiza),islem);
+            toplam(atof(birinci_hafiza),atof(ikinci_hafiza),islem);
           }
           
           
@@ -172,32 +187,19 @@ void toplam(float Sy1,float Sy2,char yapilan_islem) {
     {
       sonuc=(Sy1+Sy2);
     }
-    if(yapilan_islem=='-')
+    else if(yapilan_islem=='-')
     {
       sonuc=(Sy1-Sy2);
     }
-    if(yapilan_islem=='x')
+    else if(yapilan_islem=='x')
     {
       sonuc=(Sy1*Sy2);
     }
-    if(yapilan_islem=='/')
+    else if(yapilan_islem=='/')
     {
       sonuc=(Sy1/Sy2);
     }
   }
   lcd.print(sonuc);
-  
-  
-  
-}
-
-
-
-
-
-                 
-                    
-            
-                  
-
-                    
+    
+}                    
