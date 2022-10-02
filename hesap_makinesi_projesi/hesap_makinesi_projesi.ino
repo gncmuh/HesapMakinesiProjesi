@@ -160,7 +160,7 @@ void ekran_yonetimi() {
 }
       
 
-void toplam(int Sy1,int Sy2,char yapilan_islem) {
+void toplam(float Sy1,float Sy2,char yapilan_islem) {
   
   if(!bool(0))
   {
