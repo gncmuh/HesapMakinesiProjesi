@@ -36,7 +36,6 @@ bool kapi=false;bool kapi2=false;
 char gelen_tus;
 char birinci_hafiza[10];
 char ikinci_hafiza[10];
-char ekran_nesneleri[]={'+','-','*','/'};
 byte sayac=3;
 char islem;float sonuc;
 void setup()
