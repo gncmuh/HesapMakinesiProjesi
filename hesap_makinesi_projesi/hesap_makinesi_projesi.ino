@@ -122,8 +122,8 @@ void ekran_yonetimi() {
             lcd.clear();
             ilk_ekran();
             kapi=!kapi;kapi2=!kapi2;sayac=3;
-            kapi3=!kapi3;
-            islem=gelen_tus;
+            kapi3=false;
+            islem=gelen_tus;sayac=3;
             goto buradan2;
           }  
           
@@ -140,7 +140,7 @@ void ekran_yonetimi() {
         if(digitalRead(pin.virgul_tusu)!=0 and kapi3==false)
         {
           ikinci_hafiza[sayac-3]=virgul[0];
-          lcd.setCursor(sayac,0);lcd.print(birinci_hafiza[sayac-3]);
+          lcd.setCursor(sayac,0);lcd.print(ikinci_hafiza[sayac-3]);
           sayac++;
           kapi3=!kapi3;
         }
@@ -202,4 +202,4 @@ void toplam(float Sy1,float Sy2,char yapilan_islem) {
   }
   lcd.print(sonuc);
     
-}                    
+}                      
